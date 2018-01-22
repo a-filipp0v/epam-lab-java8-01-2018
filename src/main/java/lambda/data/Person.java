@@ -27,8 +27,13 @@ public class Person implements Comparable<Person>, Serializable {
         return firstName;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastName(Person this) {
+        return this.lastName;
+    }
+
+
+    public static String getLastNameStatic(Person person) {
+        return person.getLastName();
     }
 
     public int getAge(Person this) {

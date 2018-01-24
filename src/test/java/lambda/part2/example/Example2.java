@@ -15,7 +15,7 @@ public class Example2 {
 
     // (Person, (Person -> String)) -> (String -> boolean)
     private static Predicate<String> stringPropertyChecker(Person person, Function<Person, String> getProperty) {
-        return string -> Objects.equals(string, getProperty.apply(person));
+        return propertyValue -> Objects.equals(getProperty.apply(person), propertyValue);
     }
 
     // (Person -> String) -> boolean
@@ -23,27 +23,21 @@ public class Example2 {
     public void checkConcretePersonStringProperty() {
         Person person = new Person("Иван", "Мельников", 33);
 
-        // Person -> String
-        Function<Person, String> getFirstName = Person::getFirstName;
-
         // String -> boolean
-        Predicate<String> checkFirstName = stringPropertyChecker(person, getFirstName);
+        Predicate<String> checkFirstName = stringPropertyChecker(person, Person::getFirstName);
 
         assertTrue(checkFirstName.test("Иван"));
+        assertFalse(checkFirstName.test("Игорь"));
     }
 
     // (Person -> String) -> (Person -> (String -> boolean))
+    // Predicate<String> = String -> boolean
     private static Function<Person, Predicate<String>> stringPropertyChecker(Function<Person, String> propertyExtractor) {
-        return person -> {
-            Predicate<String> checker = checkingValue -> {
-                boolean isEquals = Objects.equals(propertyExtractor.apply(person), checkingValue);
-                return isEquals;
-            };
-            return checker;
-        };
+        return person -> checkingValue -> Objects.equals(propertyExtractor.apply(person), checkingValue);
     }
 
     @Test
+    @SuppressWarnings("Convert2MethodRef")
     public void checkAnyPersonStringProperty() {
         Person person = new Person("Иван", "Мельников", 33);
 
@@ -55,7 +49,7 @@ public class Example2 {
 
     // (V -> P) -> (V -> P ->  boolean)
     private static <V, P> Function<V, Predicate<P>> propertyChecker(Function<V, P> propertyExtractor) {
-        return person -> checkingValue -> Objects.equals(propertyExtractor.apply(person), checkingValue);
+        return object -> checkedProperty -> Objects.equals(propertyExtractor.apply(object), checkedProperty);
     }
 
     @Test

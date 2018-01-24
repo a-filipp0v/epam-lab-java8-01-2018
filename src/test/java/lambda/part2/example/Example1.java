@@ -5,7 +5,9 @@ import org.junit.Test;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static org.junit.Assert.*;
 
@@ -30,6 +32,8 @@ public class Example1 {
 
         // Person -> String
         Function<Person, String> lastName = Person::getLastName;
+
+        Supplier<String> supplierLastName = person::getLastName;
 
         assertEquals("Мельников", lastName.apply(person));
     }
@@ -57,7 +61,9 @@ public class Example1 {
         // (Person, String) -> Boolean
         BiFunction<Person, String, Boolean> sameLastName = Example1::isSameLastName;
 
+        BiPredicate<Person, String> sameLastNamePredicate = Example1::isSameLastName;
+
         assertTrue(sameLastName.apply(person, "Мельников"));
-        assertFalse(sameLastName.apply(person, "Плотников"));
+        assertFalse(sameLastNamePredicate.test(person, "Плотников"));
     }
 }
